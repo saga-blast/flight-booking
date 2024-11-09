@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Search Flights</title>
+    <style>
+        body {
+            background-color: #f5f5f5; /* Cream color background */
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #e6f7ff; /* Mild blue color for form background */
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 50px;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin: 10px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="datetime-local"] {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 60%;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .back-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function confirmBack() {
+            if (confirm('Are you sure you want to go back?')) {
+                window.history.back();
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <button class="back-button" onclick="confirmBack()">Back</button>
+    <h1>Search for Flights</h1>
+
+    <!-- Search Form -->
+    <form th:action="@{/flightmanagement/search/{userId}(userId=${userId})}" method="get">
+        <label for="departureAirport">Departure Airport: </label>
+        <input type="text" id="departureAirport" name="departureAirport" th:value="${departureAirport}" required>
+
+        <label for="arrivalAirport">Arrival Airport: </label>
+        <input type="text" id="arrivalAirport" name="arrivalAirport" th:value="${arrivalAirport}"  required>
+
+        <label for="departureTime">Departure Time: </label>
+        <input type="datetime-local" id="departureTime" name="departureTime" th:value="${departureTime}">
+
+        <button type="submit">Search</button>
+    </form>
+
+    <div th:if="${searchCondition}">
+        <span>No Flight found for given search details</span>
+    </div>
+
+    <!-- Flight List -->
+    <div th:if="${showAvailableTable}" class="flight-list">
+        <h2>Available Flights</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Flight Name</th>
+                <th>Departure Airport</th>
+                <th>Arrival Airport</th>
+                <th>Departure Time</th>
+                <th>Arrival Time</th>
+                <th>Economy Seats Available</th>
+                <th>Business Seats Available</th>
+                <th>First Class Seats Available</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Thymeleaf loop to populate rows -->
+            <tr th:each="flight : ${flights}">
+                <td th:text="${flight.flightName}"></td>
+                <td th:text="${flight.departureAirport}"></td>
+                <td th:text="${flight.arrivalAirport}"></td>
+                <td th:text="${flight.departureTime}"></td>
+                <td th:text="${flight.arrivalTime}"></td>
+                <td th:text="${flight.economySeats}"></td>
+                <td th:text="${flight.businessSeats}"></td>
+                <td th:text="${flight.firstClassSeats}"></td>
+                <td>
+                    <a th:href="@{'/flightmanagement/bookFlight/' + ${flight.flightId} + '?userId=' + ${userId}}">
+                        <button>Book</button>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

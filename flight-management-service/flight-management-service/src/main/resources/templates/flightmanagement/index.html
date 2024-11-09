@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Flight Management</title>
+    <style>
+        .back-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function confirmBack() {
+            if (confirm('Are you sure you want to go back?')) {
+                window.history.back();
+            }
+        }
+    </script>
+</head>
+<body>
+<button class="back-button" onclick="confirmBack()">Back</button>
+<h1>Welcome to Flight Management</h1>
+<p><a th:href="@{/flightmanagement/addFlight}">Add New Flight</a></p>
+<p><a th:href="@{/flightmanagement/viewFlights}">View All Flights</a></p>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upgrade Booking</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 60%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #e6f7ff;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 50px;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin: 10px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 80%;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .total-price {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        .back-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function confirmBack() {
+            if (confirm('Are you sure you want to go back?')) {
+                window.history.back();
+            }
+        }
+        function calculateUpdatedPrice() {
+            let noOfTickets = document.getElementById("bookedSeats").value || 0;
+            let economyPrice = document.getElementById("economyPrice").value || 0;
+            let businessPrice = document.getElementById("businessPrice").value || 0;
+            let firstClassPrice = document.getElementById("firstClassPrice").value || 0;
+            let selectedClass = document.getElementById("newClass").value;
+
+            let total = 0;
+            if(selectedClass === "Economy"){
+                total = noOfTickets * economyPrice;
+            }else if(selectedClass === "Business"){
+                total = noOfTickets * businessPrice;
+            }else{
+                total = noOfTickets * firstClassPrice;
+            }
+            document.getElementById("updatedTotalPrice").innerHTML = total;
+        }
+
+        function submitUpgradeForm() {
+            let userId = document.getElementById("userId").value;
+            // Proceed with form submission
+            const bookingUpdate = {
+                bookingId: document.getElementById("bookingId").value,
+                flightId: document.getElementById("flightId").value,
+                userId: document.getElementById("userId").value,
+                oldClass: document.getElementById("oldClass").value,
+                noOfTickets: document.getElementById("bookedSeats").value,
+                newClass: document.getElementById("newClass").value,
+                totalPrice: document.getElementById("updatedTotalPrice").value
+            };
+
+            fetch('/flightmanagement/upgradeBooking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookingUpdate)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/flightmanagement/myFlights/' +userId; // Redirect to the "My Flights" page
+                    } else {
+                        alert('Upgrade failed. Please try again.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <button class="back-button" onclick="confirmBack()">Back</button>
+    <h1>Upgrade Booking</h1>
+    <form onsubmit="event.preventDefault(); submitUpgradeForm();">
+        <!-- Pre-filled details from the existing booking -->
+        <div>
+            <label for="oldClass">Booked Class :</label>
+            <input type="text" id="oldClass" th:value="${booking.flightClass}" readonly>
+        </div>
+        <div>
+            <label for="bookedSeats">Booked Seats:</label>
+            <input type="number" id="bookedSeats" th:value="${booking.noOfTickets}" readonly>
+        </div>
+
+        <input type="hidden" id="bookingId" th:value="${booking.bookingId}">
+        <input type="hidden" id="flightId" th:value="${booking.flightId}">
+        <input type="hidden" id="userId" th:value="${booking.userId}">
+
+        <!-- Seat Upgrades -->
+        <div onclick="calculateUpdatedPrice()">
+            <label for="newClass">Update Class to :</label>
+            <select id="newClass" required>
+                <option th:if="${isEconomy}" value="Economy" >Economy</option>
+                <option th:if="${isBussiness}" value="Business">Business</option>
+                <option th:if="${isFirstClass}" value="FirstClass">First Class</option>
+            </select>
+        </div>
+
+        <!-- Prices (hidden) -->
+        <input type="hidden" id="economyPrice" th:value="${flight.economyPrice}">
+        <input type="hidden" id="businessPrice" th:value="${flight.businessPrice}">
+        <input type="hidden" id="firstClassPrice" th:value="${flight.firstClassPrice}">
+
+        <!-- Updated Total Price -->
+        <div class="total-price">
+            <strong>Updated Total Price: </strong><span id="updatedTotalPrice">0.00</span>
+        </div>
+
+        <div class="total-price">
+            <strong>Existing Total Price: </strong><span id="totalPrice" th:text="${booking.totalPrice}">0.00</span>
+        </div>
+
+        <button type="submit">Upgrade Booking</button>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>View All Flights</title>
+
+    <style>
+        body {
+            font-family: Arial,sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color:#f5f5dc; /* Cream background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .flight-table-container {
+            width: 130%;
+            background-color: #e6f7ff; /* Mild blue color */
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        table tr:hover {
+            background-color: #ddd;
+        }
+        .actions {
+            display: flex;
+            justify-content: space-around;
+        }
+        .edit-btn, .delete-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+        }
+        .edit-btn {
+            background-color: #4CAF50;
+        }
+        .delete-btn {
+            background-color: #f44336;
+        }
+        .add-flight-btn {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .back-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function confirmBack() {
+            if (confirm('Are you sure you want to go back?')) {
+                window.history.back();
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+<div
+
+        class="flight-table-container">
+    <button class="back-button" onclick="confirmBack()">Back</button>
+    <h1>View All Flights</h1>
+
+    <a class="add-flight-btn" th:href="@{/flightmanagement/addFlight}">Add New Flight</a>
+
+    <table>
+
+        <thead>
+
+        <tr>
+
+            <th>Flight ID</th>
+
+            <th>Flight Name</th>
+
+            <th>Departure Airport</th>
+
+            <th>Arrival Airport</th>
+
+            <th>Departure Time</th>
+
+            <th>Arrival Time</th>
+
+            <th>Economy Seats</th>
+
+            <th>Business Seats</th>
+
+            <th>First Class Seats</th>
+
+            <th>Economy Price</th>
+
+            <th>Business Price</th>
+
+            <th>First Class Price</th>
+
+            <th>Status</th>
+
+            <th>Actions</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr th:each="flight: ${flights}">
+            <td th:text="${flight.flightId}"></td>
+            <td th:text="${flight.flightName}"></td>
+            <td th:text="${flight.departureAirport}"></td>
+            <td th:text="${flight.arrivalAirport}"></td>
+            <td th:text="${flight.departureTime}"></td>
+            <td th:text="${flight.arrivalTime}"></td>
+            <td th:text="${flight.economySeats}"></td>
+            <td th:text="${flight.businessSeats}"></td>
+            <td th:text="${flight.firstClassSeats}"></td>
+            <td th:text="${flight.economyPrice}"></td>
+            <td th:text="${flight.businessPrice}"></td>
+            <td th:text="${flight.firstClassPrice}"></td>
+            <td th:text="${flight.status}"></td>
+            <td class="actions">
+                <a th:href="@{/flightmanagement/editFlight/{flightId}(flightId=${flight.flightId})}" class="edit-btn">Edit</a>
+                <a th:href="@{/flightmanagement/deleteFlight/{flightId}(flightId=${flight.flightId})}" class="delete-btn">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+
+</div>
+
+</body>
+
+</html>

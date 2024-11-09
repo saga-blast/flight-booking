@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book Flight</title>
+    <style>
+        body {
+            background-color: #f5f5f5; /* Cream color background */
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 60%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #e6f7ff; /* Mild blue background */
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 50px;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin: 10px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="datetime-local"],
+        input[type="number"],
+        select {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 80%;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .total-price {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        .back-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function calculateTotal() {
+            let economySeats = document.getElementById("economySeats").value || 0;
+            let businessSeats = document.getElementById("businessSeats").value || 0;
+            let firstClassSeats = document.getElementById("firstClassSeats").value || 0;
+
+            let economyPrice = document.getElementById("economyPrice").value || 0;
+            let businessPrice = document.getElementById("businessPrice").value || 0;
+            let firstClassPrice = document.getElementById("firstClassPrice").value || 0;
+
+            let total = (economySeats * economyPrice) + (businessSeats * businessPrice) + (firstClassSeats * firstClassPrice);
+            document.getElementById("totalPrice").innerHTML = total;
+        }
+        function showSeatsInput() {
+            // Get selected class
+            var selectedClass = document.getElementById("classes").value;
+
+            // Hide all seat input rows initially
+            document.getElementById("economySeatsRow").style.display = "none";
+            document.getElementById("businessSeatsRow").style.display = "none";
+            document.getElementById("firstClassSeatsRow").style.display = "none";
+
+            // Show the corresponding input field based on the selected class
+            if (selectedClass === "Economy") {
+                document.getElementById("economySeatsRow").style.display = "block";
+            } else if (selectedClass === "Business") {
+                document.getElementById("businessSeatsRow").style.display = "block";
+            } else if (selectedClass === "FirstClass") {
+                document.getElementById("firstClassSeatsRow").style.display = "block";
+            }
+        }
+
+
+        function submitForm() {
+            // Gather form data
+            var economySeats =  document.getElementById("economySeats").value || 0 ;
+            var businessSeats =  document.getElementById("businessSeats").value || 0;
+            var firstClassSeats =  document.getElementById("firstClassSeats").value || 0 ;
+            const booking = {
+                userId: document.getElementById("userId").value,
+                flight: {
+                    flightId: document.getElementById("flightId").value,
+                    economySeats: economySeats,
+                    businessSeats: businessSeats,
+                    firstClassSeats: firstClassSeats
+                },
+                time: new Date().toISOString(), // Use current time as an example
+                classes: document.getElementById("classes").value,
+                paymentMode: document.getElementById("paymentMode").value,
+                noOfTickets: parseInt(economySeats) + parseInt(businessSeats) + parseInt(firstClassSeats),
+                totalPrice: document.getElementById("totalPrice").textContent
+            };
+
+            // Send the booking data to the server
+            fetch('/flightmanagement/book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(booking)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = 'http://localhost:8081/usermanagement/passengerDashboard?userId='+parseInt(document.getElementById("userId").value); // Redirect on success
+                    } else {
+                        // Handle errors
+                        alert('Booking failed. Please try again.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        function confirmBack() {
+            if (confirm('Are you sure you want to go back?')) {
+                window.history.back();
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <button class="back-button" onclick="confirmBack()">Back</button>
+    <h1>Book Flight</h1>
+
+    <form onsubmit="event.preventDefault(); submitForm();">
+        <!-- Flight Information (Pre-filled from Flight entity) -->
+        <div class="form-row">
+        <label for="flightName">Flight Name:</label>
+        <input type="text" id="flightName" name="flightName" th:value="${tempFlight.flightName}" readonly>
+        </div>
+
+        <div class="form-row">
+        <label for="departureAirport">Departure Airport:</label>
+        <input type="text" id="departureAirport" th:value="${tempFlight.departureAirport}" readonly>
+        </div>
+
+        <div class="form-row">
+        <label for="arrivalAirport">Arrival Airport:</label>
+        <input type="text" id="arrivalAirport" name="departureAirport" th:value="${tempFlight.arrivalAirport}" readonly>
+        </div>
+
+        <div class="form-row">
+        <label for="departureTime">Departure Time:</label>
+        <input type="datetime-local" id="departureTime" name="arrivalAirport" th:value="${formattedDepartureTime}" readonly>
+        </div>
+
+        <!-- Class Selection -->
+        <div class="form-row">
+            <label for="classes">Class:</label>
+            <select id="classes" required onchange="showSeatsInput()">
+                <option value="">Select Class</option>
+                <option value="Economy">Economy</option>
+                <option value="Business">Business</option>
+                <option value="FirstClass">First Class</option>
+            </select>
+        </div>
+
+        <!-- Economy Seats Input (initially hidden) -->
+        <div class="form-row" id="economySeatsRow" style="display: none;">
+            <label for="economySeats">Economy Seats:</label>
+            <input type="number" id="economySeats" name="economySeats" min="0" oninput="calculateTotal()">
+        </div>
+
+        <!-- Business Seats Input (initially hidden) -->
+        <div class="form-row" id="businessSeatsRow" style="display: none;">
+            <label for="businessSeats">Business Seats:</label>
+            <input type="number" id="businessSeats" name="businessSeats" min="0" oninput="calculateTotal()">
+        </div>
+
+        <!-- First Class Seats Input (initially hidden) -->
+        <div class="form-row" id="firstClassSeatsRow" style="display: none;">
+            <label for="firstClassSeats">First Class Seats:</label>
+            <input type="number" id="firstClassSeats" name="firstClassSeats" min="0" oninput="calculateTotal()">
+        </div>
+
+        <!-- Prices (Hidden, Pre-filled from Flight entity) -->
+        <input type="hidden" id="userId" th:value="${userId}">
+        <input type="hidden" id="flightId" th:value="${tempFlight.flightId}">
+        <input type="hidden" id="economyPrice" th:value="${tempFlight.economyPrice}">
+        <input type="hidden" id="businessPrice" th:value="${tempFlight.businessPrice}">
+        <input type="hidden" id="firstClassPrice" th:value="${tempFlight.firstClassPrice}">
+
+        <!-- Total Price Display -->
+        <div class="total-price">
+            <strong>Total Price: </strong><span id="totalPrice">0.00</span>
+        </div>
+
+
+        <!-- Payment Mode -->
+        <div class="form-row">
+        <label for="paymentMode">Payment Mode:</label>
+            <select id="paymentMode" required>
+                <option value="Debit">Debit Card</option>
+                <option value="Credit">Credit Card</option>
+                <option value="UPI">UPI</option>
+            </select>
+        </div>
+
+        <button type="submit">Book</button>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>My Flights</title>
+    <style>
+        body {
+            background-color: #f7f7f7;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            margin-top: 50px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .no-flights {
+            text-align: center;
+            margin-top: 20px;
+            color: #888;
+        }
+        .upgrade-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .upgrade-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <button class="back-button" onclick="confirmBack()">Back</button>
+    <h1>My Flights</h1>
+
+    <div th:if="${flights.isEmpty()}">
+        <p class="no-flights">You haven't booked any flights yet.</p>
+    </div>
+
+    <table th:if="${!flights.isEmpty()}">
+        <thead>
+        <tr>
+            <th>Flight ID</th>
+            <th>Flight Name</th>
+            <th>Departure Airport</th>
+            <th>Arrival Airport</th>
+            <th>Departure Time</th>
+            <th>Arrival Time</th>
+            <th>Class</th>
+            <th>No. of Tickets</th>
+            <th>Total Price</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="flight: ${flights}">
+            <td th:text="${flight.flightId}"></td>
+            <td th:text="${flight.flightName}"></td>
+            <td th:text="${flight.departureAirport}"></td>
+            <td th:text="${flight.arrivalAirport}"></td>
+            <td th:text="${flight.departureTime}"></td>
+            <td th:text="${flight.arrivalTime}"></td>
+            <td th:text="${flight.flightClass}"></td>
+            <td th:text="${flight.noOfTickets}"></td>
+            <td th:text="${flight.totalPrice}"></td>
+            <td>
+<!--                <a class="upgrade-button"-->
+<!--                   th:href="@{flightmanagement/upgradeBooking(flightId=${flight.flightId}, bookedSeats=${flight.noOfTickets})}">-->
+<!--                    Upgrade-->
+<!--                </a>-->
+                <a th:href="@{'/flightmanagement/upgradeBooking?flightId=' + ${flight.flightId} + '&userId=' + ${userId} }">
+                    <button>Upgrade</button>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
