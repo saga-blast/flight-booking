@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        .dashboard{
+            text-align: center;
+            margin-top: 50px;
+        }
+        .dashboard button {
+            display: block;
+            margin: 10px auto;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            width: 200px;
+            cursor: pointer;
+        }
+        .dashboard button:hover{
+            background-color: #0056b3;
+        }.back-button {
+             padding: 10px 20px;
+             background-color: #007bff;
+             color: white;
+             border: none;
+             border-radius: 5px;
+             cursor: pointer;
+             text-decoration: none;
+             position: fixed;
+             bottom: 20px;
+             left: 20px;
+         }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function confirmBack() {
+            if (confirm('Are you sure you want to go back?')) {
+                window.history.back();
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="dashboard">
+    <button class="back-button" onclick="confirmBack()">Back</button>
+    <h1>Admin Dashboard</h1>
+    <h2>Welcome, <span th:text="${username}">Guest</span>!</h2>
+
+    <a th:href="@{http://localhost:8082/flightmanagement/addFlight}">
+        <button>Add Flight</button>
+    </a>
+
+    <a th:href="@{http://localhost:8082/flightmanagement/viewFlights}">
+        <button>View All Flights</button>
+    </a>
+
+    <a th:href="@{/usermanagement/register}">
+        <button>Create New Admin</button>
+    </a>
+
+    <a th:href="@{http://localhost:8082/flightmanagement/viewFlights}">
+        <button>Generate Report</button>
+            </a>
+
+</div>
+
+
+</body> </html>

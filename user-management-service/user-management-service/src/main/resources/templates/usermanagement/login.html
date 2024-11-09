@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Login</title>
+
+    <style>
+
+        body {
+            font-family: Arial,sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5dc; /* Cream background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-box {
+            background-color: #e6f7ff; /* Mild blue color */
+            border-radius: 15px;
+            padding: 30px;
+            width: 300px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .login-box h1 {
+            margin-bottom: 20px;
+        }
+
+        .login-box label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .login-box input[type="text"],
+        .login-box input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-box button:hover {
+            background-color: #45a049;
+        }
+
+        .register-btn {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background-color: #008CBA;}
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        }
+
+        .register-btn:hover {
+            background-color: #007bb5;
+        }
+
+        .error-message{
+            color:red;
+            margin-bottom: 15px;
+        }
+        .back-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function confirmBack() {
+            if (confirm('Are you sure you want to go back?')) {
+                window.history.back();
+            }
+        }
+    </script>
+</head>
+
+<body>
+<button class="back-button" onclick="confirmBack()">Back</button>
+<div class="login-box">
+
+    <h1>Login</h1>
+    <div th:if="${error}" class ="error-message">
+        Invalid username or password.
+    </div>
+
+    <form th:action="@{/usermanagement/login}" method="post">
+        <div>
+            <label for="username">Username: </label>
+            <input type="text" id="username" name="username" required pattern="[a-zA-Z]+"/>
+            <div th:if="${usernameError}" class="error-message" th:text="${usernameError}"></div>
+        </div>
+        <div>
+            <label for="password">Password: </label>
+            <input type="password" id="password" name="password" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"/>
+            <div th:if="${passwordError}" class="error-message" th:text="${passwordError}"></div>
+
+        </div>
+        <div>
+            <button type="submit">Login</button> </div>
+    </form>
+
+    <!--    <button class="register-btn" th:onclick="@{/register}">Register</button>-->
+    <div class="register-btn">
+        <a th:href="@{/usermanagement/register}">
+            <button>Register</button>
+        </a>
+    </div>
+</div>
+
+</body>
+
+</html>

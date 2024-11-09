@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Flight Management Service</title>
+    <style>
+        body { text-align: center;
+            font-family: Arial,
+            sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5dc; /*
+    Cream color background */ }
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px;
+            background-color: #f1f1f1;}
+        .login-btn {
+            margin-right: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;}
+        .h1 {
+            margin-top: 50px; font-size: 36px;}
+        .logo {
+            margin: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <a class="login-btn" th:href="@{usermanagement/login}">Login</a>
+
+</div>
+
+<h1>Flight Management Service</h1>
+
+<img src="https://wonderfulengineering.com/wp-content/uploads/2014/05/airplane-wallpaper-2.jpg" alt="Flight Logo" class="logo" width="1000px">
+
+
+</body>
+
+</html>
